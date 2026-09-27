@@ -13,8 +13,8 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [load, setload] = useState(false);
   const [selectmovie, setselectmovie] = useState(null);
-  const [watched, setWatched] = useLocalstoragestate([],"watched")
-    
+  const [watched, setWatched] = useLocalstoragestate([], "watched");
+
   useEffect(
     function () {
       const controller = new AbortController();
@@ -23,7 +23,7 @@ export default function App() {
           setload(true);
           setError("");
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${key}&s=${query}`,
+            `https://www.omdbapi.com/?apikey=${key}&s=${query}`,
             { signal: controller.signal },
           );
           if (!res.ok)
@@ -69,20 +69,23 @@ export default function App() {
 }
 //////////////////////////////////////////////
 function Header({ movies, query, setQuery }) {
-  const inputEl=useRef(null)
-  useEffect(function(){
-    function callback(e){
-      if (document.activeElement===inputEl.current)return
-      if (e.code==="Enter") {
-        inputEl.current.focus()
-        setQuery('')
+  const inputEl = useRef(null);
+  useEffect(
+    function () {
+      function callback(e) {
+        if (document.activeElement === inputEl.current) return;
+        if (e.code === "Enter") {
+          inputEl.current.focus();
+          setQuery("");
+        }
       }
-    }
-    document.addEventListener('keydown',callback)
-    return function(){
-      document.removeEventListener('keydown',callback)
-    }
-  },[setQuery])
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [setQuery],
+  );
   return (
     <nav className="nav-bar">
       <div className="logo">
@@ -105,11 +108,19 @@ function Header({ movies, query, setQuery }) {
 }
 //////////////////////////////////////
 
-function Main({ movies, errorsearch, load, selectmovie, setselectmovie,watched,setWatched }) {
+function Main({
+  movies,
+  errorsearch,
+  load,
+  selectmovie,
+  setselectmovie,
+  watched,
+  setWatched,
+}) {
   const [isOpen1, setIsOpen1] = useState(true);
   const [isOpen2, setIsOpen2] = useState(true);
-  console.log(watched)
-  const avgImdbRating = average(watched.map((movie) => (movie.imdbRating)));
+  
+  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.ratingmovie));
   const avgRuntime = average(watched.map((movie) => movie.Runtime));
 
@@ -212,7 +223,7 @@ function MovieDetails({ selectmovie, setselectmovie, watched, setWatched }) {
         try {
           setloadDetailmovie(true);
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${key}&i=${selectmovie}`,
+            `https://www.omdbapi.com/?apikey=${key}&i=${selectmovie}`,
           );
           if (!res.ok) throw new Error("somthin was wrong in fetching data");
           const data = await res.json();
@@ -236,8 +247,7 @@ function MovieDetails({ selectmovie, setselectmovie, watched, setWatched }) {
       imdbID,
       ratingmovie,
     };
-    setWatched((watched) => [...watched, newWatched]);
-    console.log(watched);
+    setWatched((watched) => [...watched, newWatched]);;
     CloseDetail();
   }
 
